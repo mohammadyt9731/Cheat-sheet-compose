@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.cheetsheet'
+    namespace 'com.example.chaetsheet'
     compileSdk 32
 
     defaultConfig {

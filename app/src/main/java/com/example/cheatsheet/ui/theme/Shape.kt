@@ -1,4 +1,4 @@
-package com.example.cheetsheet.ui.theme
+package com.example.cheatsheet.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

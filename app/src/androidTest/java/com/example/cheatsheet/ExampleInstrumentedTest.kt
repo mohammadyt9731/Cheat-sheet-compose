@@ -1,4 +1,4 @@
-package com.example.cheetsheet
+package com.example.cheatsheet
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

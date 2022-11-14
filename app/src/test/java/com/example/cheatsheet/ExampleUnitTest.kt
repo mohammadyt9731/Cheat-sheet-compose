@@ -1,4 +1,4 @@
-package com.example.cheetsheet
+package com.example.cheatsheet
 
 import org.junit.Test
 
