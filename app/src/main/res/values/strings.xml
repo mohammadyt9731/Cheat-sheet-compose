@@ -4,4 +4,10 @@
     <string name="label_hi">Hi</string>
     <string name="label_myFullName">Mohammad Yazdi</string>
     <string name="label_mountain">Mountain</string>
+    <string name="label_typeSomeThing">Type Something</string>
+    <string name="label_add">Add</string>
+    <string name="label_Reset">Reset</string>
+    <string name="label_list">List</string>
+    <string name="label_chip">Chip</string>
+    <string name="label_icMenuOpton">icon menu option</string>
 </resources>
