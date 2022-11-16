@@ -98,7 +98,6 @@ class HomeFragment : Fragment() {
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     ListSection()
-                    TabsAndPager()
                     DashedLineDivider()
                     CheckBoxSection()
                     DashedLineDivider()
@@ -165,10 +164,15 @@ class HomeFragment : Fragment() {
         }
     }
 
+    @SuppressLint("MutableCollectionMutableState")
     @Composable
     fun ListSection() {
         var inputValueState by remember {
             mutableStateOf("")
+        }
+
+        val items = remember {
+            mutableStateListOf<String>()
         }
 
         Column(
@@ -193,6 +197,10 @@ class HomeFragment : Fragment() {
                         .height(42.dp)
                         .weight(1f),
                 ) {
+                    if (inputValueState.isNotBlank()){
+                        items.add(inputValueState)
+                        inputValueState = ""
+                    }
 
                 }
                 Spacer(modifier = Modifier.width(24.dp))
@@ -202,9 +210,15 @@ class HomeFragment : Fragment() {
                         .height(42.dp)
                         .weight(1f),
                 ) {
+                    if (inputValueState.isNotBlank())
+                        inputValueState = ""
+                    else
+                        items.clear()
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
+
+            TabsAndPager(items)
         }
     }
 
@@ -257,19 +271,10 @@ class HomeFragment : Fragment() {
 
     @OptIn(ExperimentalPagerApi::class)
     @Composable
-    fun TabsAndPager() {
+    fun TabsAndPager(items: List<String>) {
         val pagerState = rememberPagerState(pageCount = 2)
         val selectedIndex = pagerState.currentPage
         val coroutineScope = rememberCoroutineScope()
-        val listItems = listOf(
-            "Something1",
-            "Something22",
-            "Something333",
-            "Something44",
-            "Something",
-            "Something5555",
-            "Something5555"
-        )
 
         val tabTitles = listOf(
             stringResource(id = R.string.label_list),
@@ -334,14 +339,15 @@ class HomeFragment : Fragment() {
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier
-                        .fillMaxWidth().padding(top = 24.dp, bottom = 4.dp), verticalAlignment = Alignment.Top
+                        .fillMaxSize()
+                        .padding(top = 24.dp, bottom = 4.dp), verticalAlignment = Alignment.Top
 
                 ) { page ->
                     when (page) {
                         0 -> {
                             LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                items(listItems.size) {
-                                    ListItem(listItems[it], (it != listItems.size - 1))
+                                items(items.size) {
+                                    ListItem(items[it], (it != items.size - 1))
                                 }
 
                             }
@@ -349,9 +355,10 @@ class HomeFragment : Fragment() {
                         1 -> {
                             FlowRow(
                                 modifier = Modifier
-                                    .fillMaxWidth()
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState())
                             ) {
-                                listItems.forEach {
+                                items.forEach {
                                     ChipItem(it)
                                 }
                             }
@@ -407,7 +414,7 @@ class HomeFragment : Fragment() {
 
         Chip(
             modifier = Modifier
-                .padding(end = 16.dp)
+                .padding(end = 12.dp)
                 .background(Color.Transparent),
             colors = ChipDefaults.chipColors(Color.Transparent),
             onClick = { /*TODO*/ },
