@@ -324,8 +324,6 @@ class HomeFragment : Fragment() {
                 }
 
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -336,14 +334,14 @@ class HomeFragment : Fragment() {
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier
-                        .fillMaxWidth(), verticalAlignment = Alignment.Top
+                        .fillMaxWidth().padding(top = 24.dp, bottom = 4.dp), verticalAlignment = Alignment.Top
 
                 ) { page ->
                     when (page) {
                         0 -> {
                             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                                 items(listItems.size) {
-                                    ListItem(listItems[it])
+                                    ListItem(listItems[it], (it != listItems.size - 1))
                                 }
 
                             }
@@ -365,7 +363,7 @@ class HomeFragment : Fragment() {
     }
 
     @Composable
-    fun ListItem(text: String) {
+    fun ListItem(text: String, showDivider: Boolean) {
 
         Column(
             Modifier
@@ -392,12 +390,13 @@ class HomeFragment : Fragment() {
                     tint = MaterialTheme.colors.onBackground
                 )
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(Gray)
-            )
+            if (showDivider)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(Gray)
+                )
 
         }
     }
@@ -526,7 +525,7 @@ class HomeFragment : Fragment() {
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp),
+                .height(180.dp),
             columns = GridCells.Fixed(2),
             content = {
                 items(itemsTitle.size) {
