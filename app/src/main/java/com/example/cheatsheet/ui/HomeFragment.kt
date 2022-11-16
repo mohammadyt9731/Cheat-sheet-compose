@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,8 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.painter.Painter
@@ -197,7 +194,7 @@ class HomeFragment : Fragment() {
                         .height(42.dp)
                         .weight(1f),
                 ) {
-                    if (inputValueState.isNotBlank()){
+                    if (inputValueState.isNotBlank()) {
                         items.add(inputValueState)
                         inputValueState = ""
                     }
@@ -327,20 +324,23 @@ class HomeFragment : Fragment() {
                         }
                     )
                 }
-
             }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(190.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
+                    .height(190.dp)
 
+            ) {
+                if (items.isEmpty())
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                else
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 24.dp, bottom = 4.dp), verticalAlignment = Alignment.Top
+                        .padding(top = 24.dp, bottom = 4.dp)
+                    , verticalAlignment = Alignment.Top
 
                 ) { page ->
                     when (page) {
