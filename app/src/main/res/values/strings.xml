@@ -2,12 +2,15 @@
     <string name="app_name">CheatSheet</string>
 
     <string name="label_hi">Hi</string>
-    <string name="label_myFullName">Mohammad Yazdi</string>
+    <string name="label_full_name">Mohammad Yazdi</string>
     <string name="label_mountain">Mountain</string>
-    <string name="label_typeSomeThing">Type Something</string>
+    <string name="label_type_some_thing">Type Something</string>
     <string name="label_add">Add</string>
-    <string name="label_Reset">Reset</string>
+    <string name="label_reset">Reset</string>
     <string name="label_list">List</string>
     <string name="label_chip">Chip</string>
-    <string name="label_icMenuOpton">icon menu option</string>
+    <string name="label_ic_menu_option">icon menu option</string>
+    <string name="label_im_not_checked">Im not Checked</string>
+    <string name="label_im_checked">Im Checked</string>
+    <string name="label_check_box">checkBox</string>
 </resources>

@@ -1,19 +1,20 @@
 package com.example.cheatsheet.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -22,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -33,8 +33,6 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.google.android.material.chip.Chip
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -54,33 +52,30 @@ class HomeFragment : Fragment() {
     @Composable
     fun HomeScreen() {
         CheatSheetTheme {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colors.background)
                     .padding(horizontal = 24.dp, vertical = 20.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
 
-                    Greeter(stringResource(id = R.string.label_myFullName))
-                    Spacer(modifier = Modifier.height(20.dp))
-                    TopImage(
-                        painter = painterResource(id = R.drawable.mountain),
-                        title = stringResource(id = R.string.label_mountain)
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    ListSection()
-                }
+                Greeting(stringResource(id = R.string.label_full_name))
+                Spacer(modifier = Modifier.height(20.dp))
+                TopImage(
+                    painter = painterResource(id = R.drawable.mountain),
+                    title = stringResource(id = R.string.label_mountain)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                ListSection()
             }
         }
     }
 
     @Composable
-    fun Greeter(name: String) {
+    fun Greeting(name: String) {
         Text(
             text = buildAnnotatedString {
                 withStyle(
@@ -166,7 +161,7 @@ class HomeFragment : Fragment() {
                 }
                 Spacer(modifier = Modifier.width(24.dp))
                 RoundedButton(
-                    text = stringResource(id = R.string.label_Reset),
+                    text = stringResource(id = R.string.label_reset),
                     modifier = Modifier
                         .height(42.dp)
                         .weight(1f),
@@ -175,6 +170,9 @@ class HomeFragment : Fragment() {
             }
             Spacer(modifier = Modifier.height(24.dp))
             TabsAndPager()
+            DashedLineDivider()
+            CheckBoxSection()
+            DashedLineDivider()
         }
     }
 
@@ -197,7 +195,7 @@ class HomeFragment : Fragment() {
             ),
             placeholder = {
                 Text(
-                    text = stringResource(id = R.string.label_typeSomeThing),
+                    text = stringResource(id = R.string.label_type_some_thing),
                     style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onSurface
                 )
@@ -298,7 +296,7 @@ class HomeFragment : Fragment() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
+                    .height(190.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
 
@@ -357,7 +355,7 @@ class HomeFragment : Fragment() {
                 )
                 Icon(
                     painter = painterResource(id = R.drawable.ic_menu_option),
-                    contentDescription = stringResource(id = R.string.label_icMenuOpton),
+                    contentDescription = stringResource(id = R.string.label_ic_menu_option),
                     tint = MaterialTheme.colors.onBackground
                 )
             }
@@ -388,6 +386,83 @@ class HomeFragment : Fragment() {
                 text = text,
                 style = MaterialTheme.typography.button,
                 color = MaterialTheme.colors.onBackground
+            )
+        }
+    }
+
+    @Composable
+    fun CheckBoxSection() {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start
+        ) {
+
+            var firstCheckBoxState by remember { mutableStateOf(false) }
+            var secondCheckBoxState by remember { mutableStateOf(true) }
+
+            CustomCheckBox(firstCheckBoxState) {
+                firstCheckBoxState = firstCheckBoxState.not()
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            CustomCheckBox(secondCheckBoxState) {
+                secondCheckBoxState = secondCheckBoxState.not(
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun DashedLineDivider(color: Color = MaterialTheme.colors.primary) {
+        val pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 0f)
+        Canvas(
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+        ) {
+
+            drawLine(
+                color = color,
+                start = Offset(0f, 0f),
+                end = Offset(size.width, 0f),
+                pathEffect = pathEffect, strokeWidth = 3f
+            )
+        }
+    }
+
+    @SuppressLint("RememberReturnType")
+    @Composable
+    fun CustomCheckBox(isSelected: Boolean, changeSelected: () -> Unit) {
+
+        Row {
+            Box(modifier = Modifier.size(24.dp), contentAlignment = Alignment.Center) {
+                Icon(
+                    painter = if (isSelected)
+                        painterResource(id = R.drawable.ic_checked)
+                    else
+                        painterResource(id = R.drawable.ic_not_checked),
+                    contentDescription = stringResource(id = R.string.label_check_box),
+                    modifier = Modifier.clickable {
+                        changeSelected()
+                    },
+                    tint = if (isSelected)
+                        MaterialTheme.colors.primary
+                    else
+                        MaterialTheme.colors.surface
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = if (isSelected)
+                    stringResource(id = R.string.label_im_checked)
+                else
+                    stringResource(id = R.string.label_im_not_checked),
+                style = MaterialTheme.typography.body1,
+                color = Color.Black
             )
         }
     }
