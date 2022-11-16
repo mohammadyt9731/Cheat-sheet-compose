@@ -13,4 +13,6 @@
     <string name="label_im_not_checked">Im not Checked</string>
     <string name="label_im_checked">Im Checked</string>
     <string name="label_check_box">checkBox</string>
+    <string name="msg_state_6_choosed">State 6 choosed</string>
+    <string name="label_undo">UNDO</string>
 </resources>
