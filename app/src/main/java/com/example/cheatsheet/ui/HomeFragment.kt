@@ -459,6 +459,22 @@ class HomeFragment : Fragment() {
     }
 
     @Composable
+    fun DashedLineDivider(color: Color = MaterialTheme.colors.primary) {
+        val pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 0f)
+        Canvas(
+            Modifier.fillMaxWidth()
+        ) {
+            drawLine(
+                color = color,
+                start = Offset(0f, 0f),
+                end = Offset(size.width, 0f),
+                pathEffect = pathEffect,
+                strokeWidth = 3f
+            )
+        }
+    }
+
+    @Composable
     fun CheckBoxSection() {
         Column(
             Modifier
@@ -479,22 +495,6 @@ class HomeFragment : Fragment() {
                 secondCheckBoxState = secondCheckBoxState.not(
                 )
             }
-        }
-    }
-
-    @Composable
-    fun DashedLineDivider(color: Color = MaterialTheme.colors.primary) {
-        val pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 0f)
-        Canvas(
-            Modifier.fillMaxWidth()
-        ) {
-            drawLine(
-                color = color,
-                start = Offset(0f, 0f),
-                end = Offset(size.width, 0f),
-                pathEffect = pathEffect,
-                strokeWidth = 3f
-            )
         }
     }
 
