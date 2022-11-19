@@ -17,25 +17,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import com.example.chaetsheet.R
-import com.example.cheatsheet.ui.theme.CheatSheetTheme
-import com.example.cheatsheet.ui.theme.DarkGray
-import com.example.cheatsheet.ui.theme.Gray
-import com.example.cheatsheet.ui.theme.White700
+import com.example.cheatsheet.ui.theme.*
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -129,6 +127,7 @@ class HomeFragment : Fragment() {
         )
     }
 
+    @OptIn(ExperimentalTextApi::class)
     @Composable
     fun TopImage(painter: Painter, title: String) {
 
@@ -155,10 +154,14 @@ class HomeFragment : Fragment() {
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    color = Color.White
+                    style = MaterialTheme.typography.h5.copy(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                MaterialTheme.colors.onPrimary,
+                                MaterialTheme.colors.primary
+                            )
+                        )
+                    )
                 )
             }
         }
