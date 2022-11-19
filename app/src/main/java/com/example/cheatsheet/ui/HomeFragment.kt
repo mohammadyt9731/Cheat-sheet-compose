@@ -5,12 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,19 +22,24 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.*
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import com.example.chaetsheet.R
-import com.example.cheatsheet.ui.theme.*
+import com.example.cheatsheet.ui.theme.CheatSheetTheme
+import com.example.cheatsheet.ui.theme.DarkGray
+import com.example.cheatsheet.ui.theme.Gray
+import com.example.cheatsheet.ui.theme.White700
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -84,12 +90,11 @@ class HomeFragment : Fragment() {
                         .background(MaterialTheme.colors.background)
                         .verticalScroll(rememberScrollState())
                         .padding(horizontal = 24.dp, vertical = 20.dp),
-                    verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    Greeting(stringResource(id = R.string.label_full_name))
-                    Spacer(modifier = Modifier.height(20.dp))
+                    GreetingSection(stringResource(id = R.string.label_full_name))
+                    Spacer(modifier = Modifier.height(16.dp))
                     TopImage(
                         painter = painterResource(id = R.drawable.mountain),
                         title = stringResource(id = R.string.label_mountain)
@@ -108,7 +113,7 @@ class HomeFragment : Fragment() {
     }
 
     @Composable
-    fun Greeting(name: String) {
+    fun GreetingSection(name: String) {
         Text(
             text = buildAnnotatedString {
                 withStyle(
@@ -131,12 +136,15 @@ class HomeFragment : Fragment() {
     @Composable
     fun TopImage(painter: Painter, title: String) {
 
-        Card(
-            Modifier
+        Box(
+            modifier = Modifier
                 .fillMaxWidth()
-                .height(208.dp),
-            shape = MaterialTheme.shapes.large,
-            border = BorderStroke(width = 1.dp, color = MaterialTheme.colors.primary)
+                .height(208.dp)
+                .border(
+                    BorderStroke(width = 1.dp, color = MaterialTheme.colors.primary),
+                    shape = MaterialTheme.shapes.large
+                )
+                .clip(MaterialTheme.shapes.large)
         ) {
 
             Image(
@@ -146,24 +154,20 @@ class HomeFragment : Fragment() {
                 contentScale = ContentScale.Crop
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                contentAlignment = Alignment.BottomStart
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.h5.copy(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                MaterialTheme.colors.onPrimary,
-                                MaterialTheme.colors.primary
-                            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.h5.copy(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            MaterialTheme.colors.onPrimary,
+                            MaterialTheme.colors.primary
                         )
                     )
-                )
-            }
+                ),
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 16.dp, bottom = 8.dp)
+            )
         }
     }
 
@@ -173,22 +177,18 @@ class HomeFragment : Fragment() {
         var inputValueState by remember {
             mutableStateOf("")
         }
-
         val items = remember {
             mutableStateListOf<ListItemModel>()
         }
-
         Column(
             Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
 
             InputField(value = inputValueState) {
                 inputValueState = it
             }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Row(
                 Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -204,9 +204,8 @@ class HomeFragment : Fragment() {
                         items.add(ListItemModel(text = inputValueState))
                         inputValueState = ""
                     }
-
                 }
-                Spacer(modifier = Modifier.width(24.dp))
+                Spacer(modifier = Modifier.width(20.dp))
                 RoundedButton(
                     text = stringResource(id = R.string.label_reset),
                     modifier = Modifier
@@ -219,8 +218,7 @@ class HomeFragment : Fragment() {
                         items.clear()
                 }
             }
-            Spacer(modifier = Modifier.height(24.dp))
-
+            Spacer(modifier = Modifier.height(20.dp))
             TabsAndPager(items = items,
                 deleteClick = { items.removeAt(it) },
                 setRandomColor = { items[it].color = generateRandomColor() })
@@ -232,6 +230,7 @@ class HomeFragment : Fragment() {
         TextField(
             value = value,
             onValueChange = { onValueChange(it) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             textStyle = MaterialTheme.typography.body1,
             modifier = Modifier
                 .fillMaxWidth()
@@ -270,7 +269,6 @@ class HomeFragment : Fragment() {
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.button
             )
-
         }
     }
 
@@ -283,7 +281,6 @@ class HomeFragment : Fragment() {
         setRandomColor: (Int) -> Unit
     ) {
         val pagerState = rememberPagerState(pageCount = 2)
-        val selectedTabIndex = pagerState.currentPage
         val coroutineScope = rememberCoroutineScope()
 
         val tabTitles = listOf(
@@ -293,13 +290,10 @@ class HomeFragment : Fragment() {
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-
             TabRow(
-                selectedTabIndex = selectedTabIndex,
+                selectedTabIndex = pagerState.currentPage,
                 Modifier
                     .fillMaxWidth()
                     .background(
@@ -315,12 +309,12 @@ class HomeFragment : Fragment() {
                             .padding(6.dp)
                             .background(
                                 shape = MaterialTheme.shapes.small,
-                                color = if (index == selectedTabIndex)
+                                color = if (index == pagerState.currentPage)
                                     MaterialTheme.colors.primary else
                                     Color.Transparent
                             )
                             .clip(MaterialTheme.shapes.small),
-                        selected = index == selectedTabIndex,
+                        selected = index == pagerState.currentPage,
                         onClick = {
                             coroutineScope.launch {
                                 pagerState.scrollToPage(index)
@@ -330,7 +324,7 @@ class HomeFragment : Fragment() {
                             Text(
                                 text = title,
                                 style = MaterialTheme.typography.button,
-                                color = if (index == selectedTabIndex)
+                                color = if (index == pagerState.currentPage)
                                     MaterialTheme.colors.onPrimary else
                                     MaterialTheme.colors.onSurface
                             )
@@ -352,17 +346,17 @@ class HomeFragment : Fragment() {
                         state = pagerState,
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(top = 24.dp, bottom = 4.dp), verticalAlignment = Alignment.Top
-
+                            .padding(top = 24.dp, bottom = 4.dp),
+                        verticalAlignment = Alignment.Top
                     ) { page ->
                         when (page) {
                             0 -> {
                                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                    items(items.size) {
-                                        items[it].isShowDivider = it != items.size - 1
-                                        ListItem(listItemModel = items[it],
-                                            deleteClick = { deleteClick(it) },
-                                            setRandomColor = { setRandomColor(it) })
+                                    items(items.size) { index ->
+                                        items[index].isShowDivider = (index != items.size - 1)
+                                        ListItem(listItemModel = items[index],
+                                            deleteClick = { deleteClick(index) },
+                                            setRandomColor = { setRandomColor(index) })
                                     }
                                 }
                             }
@@ -492,11 +486,8 @@ class HomeFragment : Fragment() {
     fun DashedLineDivider(color: Color = MaterialTheme.colors.primary) {
         val pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 0f)
         Canvas(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp)
+            Modifier.fillMaxWidth()
         ) {
-
             drawLine(
                 color = color,
                 start = Offset(0f, 0f),
@@ -510,7 +501,6 @@ class HomeFragment : Fragment() {
     @SuppressLint("RememberReturnType")
     @Composable
     fun CustomCheckBox(isSelected: Boolean, changeSelected: () -> Unit) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -523,8 +513,7 @@ class HomeFragment : Fragment() {
 
         ) {
             Box(
-                modifier = Modifier
-                    .size(24.dp),
+                modifier = Modifier.size(24.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -572,8 +561,7 @@ class HomeFragment : Fragment() {
             content = {
                 items(itemsTitle.size) {
                     CustomRadioButton(
-                        modifier = Modifier
-                            .fillMaxWidth(1f),
+                        modifier = Modifier.fillMaxWidth(1f),
                         text = itemsTitle[it],
                         index = it,
                         isSelected = selectedIndex == it
@@ -613,7 +601,6 @@ class HomeFragment : Fragment() {
                 }
                 .padding(8.dp)
                 .padding(start = if (index % 2 != 0) 24.dp else 0.dp)
-
         ) {
             Box(modifier = Modifier.size(24.dp)) {
                 Icon(
@@ -629,14 +616,12 @@ class HomeFragment : Fragment() {
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
-
             Text(
                 text = text,
                 style = MaterialTheme.typography.body1,
                 color = Color.Black
             )
         }
-
     }
 
 
@@ -650,7 +635,6 @@ class HomeFragment : Fragment() {
     ) {
         val coroutineScope = rememberCoroutineScope()
         coroutineScope.launch {
-
             val snackBar = scaffoldState.snackbarHostState.showSnackbar(
                 message = text,
                 actionLabel = actionLabel
@@ -694,10 +678,8 @@ class HomeFragment : Fragment() {
                     color = MaterialTheme.colors.onSurface
                 )
             }
-
         }
     }
-
 
     private fun generateRandomColor(): Color {
         return Color(
