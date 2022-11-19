@@ -172,7 +172,7 @@ class HomeFragment : Fragment() {
         }
 
         val items = remember {
-            mutableStateListOf<String>()
+            mutableStateListOf<ListItemModel>()
         }
 
         Column(
@@ -198,7 +198,7 @@ class HomeFragment : Fragment() {
                         .weight(1f),
                 ) {
                     if (inputValueState.isNotBlank()) {
-                        items.add(inputValueState)
+                        items.add(ListItemModel(text = inputValueState))
                         inputValueState = ""
                     }
 
@@ -218,9 +218,9 @@ class HomeFragment : Fragment() {
             }
             Spacer(modifier = Modifier.height(24.dp))
 
-            TabsAndPager(items) {
-                items.removeAt(it)
-            }
+            TabsAndPager(items = items,
+                deleteClick = { items.removeAt(it) },
+                setRandomColor = { items[it].color = generateRandomColor() })
         }
     }
 
@@ -274,7 +274,11 @@ class HomeFragment : Fragment() {
     @SuppressLint("SuspiciousIndentation")
     @OptIn(ExperimentalPagerApi::class)
     @Composable
-    fun TabsAndPager(items: List<String>, deleteClick: (Int) -> Unit) {
+    fun TabsAndPager(
+        items: List<ListItemModel>,
+        deleteClick: (Int) -> Unit,
+        setRandomColor: (Int) -> Unit
+    ) {
         val pagerState = rememberPagerState(pageCount = 2)
         val selectedTabIndex = pagerState.currentPage
         val coroutineScope = rememberCoroutineScope()
@@ -352,11 +356,11 @@ class HomeFragment : Fragment() {
                             0 -> {
                                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
                                     items(items.size) {
-                                        ListItem(items[it], (it != items.size - 1)) {
-                                            deleteClick(it)
-                                        }
+                                        items[it].isShowDivider = it != items.size - 1
+                                        ListItem(listItemModel = items[it],
+                                            deleteClick = { deleteClick(it) },
+                                            setRandomColor = { setRandomColor(it) })
                                     }
-
                                 }
                             }
                             1 -> {
@@ -365,8 +369,8 @@ class HomeFragment : Fragment() {
                                         .fillMaxSize()
                                         .verticalScroll(rememberScrollState())
                                 ) {
-                                    items.forEach {
-                                        ChipItem(it)
+                                    items.forEach { itemListModel ->
+                                        ChipItem(itemListModel.text)
                                     }
                                 }
                             }
@@ -378,16 +382,12 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun ListItem(
-        text: String,
-        showDivider: Boolean,
-        deleteClick: () -> Unit
+        listItemModel: ListItemModel,
+        deleteClick: () -> Unit,
+        setRandomColor: () -> Unit
     ) {
         var isShowingDropDownMenu by remember {
             mutableStateOf(false)
-        }
-
-        var color by remember {
-            mutableStateOf(Color.Black)
         }
 
         Column(
@@ -405,9 +405,9 @@ class HomeFragment : Fragment() {
             ) {
 
                 Text(
-                    text = text,
+                    text = listItemModel.text,
                     style = MaterialTheme.typography.body1,
-                    color = color
+                    color = listItemModel.color
                 )
 
                 Box() {
@@ -423,14 +423,14 @@ class HomeFragment : Fragment() {
                     ShowDropDownMenu(isShowingDropDownMenu, {
                         deleteClick()
                     }, {
-                        color = generateRandomColor()
+                        setRandomColor()
                     }, {
                         isShowingDropDownMenu = false
                     })
 
                 }
             }
-            if (showDivider)
+            if (listItemModel.isShowDivider)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -696,7 +696,7 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun generateRandomColor():Color{
+    private fun generateRandomColor(): Color {
         return Color(
             Random.nextFloat(),
             Random.nextFloat(),
