@@ -15,4 +15,6 @@
     <string name="label_check_box">checkBox</string>
     <string name="msg_state_6_choosed">State 6 choosed</string>
     <string name="label_undo">UNDO</string>
+    <string name="label_delete">Delete</string>
+    <string name="label_random_color">Random Color</string>
 </resources>

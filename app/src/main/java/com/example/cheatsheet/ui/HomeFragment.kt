@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,6 +42,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class HomeFragment : Fragment() {
 
@@ -62,6 +64,7 @@ class HomeFragment : Fragment() {
         //set status bar color
         val systemUiController = rememberSystemUiController()
         systemUiController.setSystemBarsColor(color = White700)
+
         val scaffoldState = rememberScaffoldState()
         CheatSheetTheme {
             Scaffold(Modifier.fillMaxSize(), scaffoldState = scaffoldState,
@@ -215,7 +218,9 @@ class HomeFragment : Fragment() {
             }
             Spacer(modifier = Modifier.height(24.dp))
 
-            TabsAndPager(items)
+            TabsAndPager(items) {
+                items.removeAt(it)
+            }
         }
     }
 
@@ -266,11 +271,12 @@ class HomeFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @OptIn(ExperimentalPagerApi::class)
     @Composable
-    fun TabsAndPager(items: List<String>) {
+    fun TabsAndPager(items: List<String>, deleteClick: (Int) -> Unit) {
         val pagerState = rememberPagerState(pageCount = 2)
-        val selectedIndex = pagerState.currentPage
+        val selectedTabIndex = pagerState.currentPage
         val coroutineScope = rememberCoroutineScope()
 
         val tabTitles = listOf(
@@ -286,7 +292,7 @@ class HomeFragment : Fragment() {
 
 
             TabRow(
-                selectedTabIndex = selectedIndex,
+                selectedTabIndex = selectedTabIndex,
                 Modifier
                     .fillMaxWidth()
                     .background(
@@ -302,12 +308,12 @@ class HomeFragment : Fragment() {
                             .padding(6.dp)
                             .background(
                                 shape = MaterialTheme.shapes.small,
-                                color = if (index == selectedIndex)
+                                color = if (index == selectedTabIndex)
                                     MaterialTheme.colors.primary else
                                     Color.Transparent
                             )
                             .clip(MaterialTheme.shapes.small),
-                        selected = index == selectedIndex,
+                        selected = index == selectedTabIndex,
                         onClick = {
                             coroutineScope.launch {
                                 pagerState.scrollToPage(index)
@@ -317,7 +323,7 @@ class HomeFragment : Fragment() {
                             Text(
                                 text = title,
                                 style = MaterialTheme.typography.button,
-                                color = if (index == selectedIndex)
+                                color = if (index == selectedTabIndex)
                                     MaterialTheme.colors.onPrimary else
                                     MaterialTheme.colors.onSurface
                             )
@@ -335,49 +341,61 @@ class HomeFragment : Fragment() {
                 if (items.isEmpty())
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 else
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 24.dp, bottom = 4.dp)
-                    , verticalAlignment = Alignment.Top
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 24.dp, bottom = 4.dp), verticalAlignment = Alignment.Top
 
-                ) { page ->
-                    when (page) {
-                        0 -> {
-                            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                items(items.size) {
-                                    ListItem(items[it], (it != items.size - 1))
+                    ) { page ->
+                        when (page) {
+                            0 -> {
+                                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                                    items(items.size) {
+                                        ListItem(items[it], (it != items.size - 1)) {
+                                            deleteClick(it)
+                                        }
+                                    }
+
                                 }
-
                             }
-                        }
-                        1 -> {
-                            FlowRow(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .verticalScroll(rememberScrollState())
-                            ) {
-                                items.forEach {
-                                    ChipItem(it)
+                            1 -> {
+                                FlowRow(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .verticalScroll(rememberScrollState())
+                                ) {
+                                    items.forEach {
+                                        ChipItem(it)
+                                    }
                                 }
                             }
                         }
                     }
-                }
             }
         }
     }
 
     @Composable
-    fun ListItem(text: String, showDivider: Boolean) {
+    fun ListItem(
+        text: String,
+        showDivider: Boolean,
+        deleteClick: () -> Unit
+    ) {
+        var isShowingDropDownMenu by remember {
+            mutableStateOf(false)
+        }
+
+        var color by remember {
+            mutableStateOf(Color.Black)
+        }
 
         Column(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment = Alignment.CenterHorizontally
+
         ) {
             Row(
                 Modifier
@@ -389,13 +407,28 @@ class HomeFragment : Fragment() {
                 Text(
                     text = text,
                     style = MaterialTheme.typography.body1,
-                    color = Color.Black
+                    color = color
                 )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_menu_option),
-                    contentDescription = stringResource(id = R.string.label_ic_menu_option),
-                    tint = MaterialTheme.colors.onBackground
-                )
+
+                Box() {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_menu_option),
+                        contentDescription = stringResource(id = R.string.label_ic_menu_option),
+                        tint = MaterialTheme.colors.onBackground,
+                        modifier = Modifier.clickable {
+                            isShowingDropDownMenu = true
+                        }
+                    )
+
+                    ShowDropDownMenu(isShowingDropDownMenu, {
+                        deleteClick()
+                    }, {
+                        color = generateRandomColor()
+                    }, {
+                        isShowingDropDownMenu = false
+                    })
+
+                }
             }
             if (showDivider)
                 Box(
@@ -404,7 +437,6 @@ class HomeFragment : Fragment() {
                         .height(1.dp)
                         .background(Gray)
                 )
-
         }
     }
 
@@ -624,4 +656,53 @@ class HomeFragment : Fragment() {
                 action()
         }
     }
+
+    @Composable
+    fun ShowDropDownMenu(
+        isShowing: Boolean,
+        deleteClick: () -> Unit,
+        setRandomColor: () -> Unit,
+        onDismiss: () -> Unit
+    ) {
+
+        DropdownMenu(
+            expanded = isShowing,
+            onDismissRequest = { onDismiss() },
+        ) {
+
+            DropdownMenuItem(onClick = {
+                deleteClick()
+                onDismiss()
+            }) {
+                Text(
+                    text = stringResource(id = R.string.label_delete),
+                    style = MaterialTheme.typography.button,
+                    color = MaterialTheme.colors.onSurface
+                )
+            }
+
+            DropdownMenuItem(onClick = {
+                setRandomColor()
+                onDismiss()
+            }) {
+                Text(
+                    text = stringResource(id = R.string.label_random_color),
+                    style = MaterialTheme.typography.button,
+                    color = MaterialTheme.colors.onSurface
+                )
+            }
+
+        }
+    }
+
+
+    private fun generateRandomColor():Color{
+        return Color(
+            Random.nextFloat(),
+            Random.nextFloat(),
+            Random.nextFloat(),
+        )
+    }
 }
+
+
