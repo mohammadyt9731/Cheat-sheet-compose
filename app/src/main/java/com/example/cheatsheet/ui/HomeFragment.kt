@@ -428,12 +428,7 @@ class HomeFragment : Fragment() {
                 }
             }
             if (listItemModel.isShowDivider)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(Gray)
-                )
+                Divider(color = Gray)
         }
     }
 
