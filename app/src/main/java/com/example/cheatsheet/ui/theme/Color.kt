@@ -12,6 +12,5 @@ val White600 = Color(0xFFF7F7F7)
 val Blue700 = Color(0xFF307483)
 val Blue200 = Color(0xFFB2E6F1)
 val SemiBlack = Color(0xFF090909)
-val Gray = Color(0x33090909)
 val DarkGray = Color(0xFF3A3A3C)
 
