@@ -1,4 +1,4 @@
-package com.example.cheatsheet.ui
+package com.example.cheatsheet.ui.model
 
 import androidx.compose.ui.graphics.Color
 

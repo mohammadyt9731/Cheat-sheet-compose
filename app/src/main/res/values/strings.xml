@@ -17,4 +17,6 @@
     <string name="label_undo">UNDO</string>
     <string name="label_delete">Delete</string>
     <string name="label_random_color">Random Color</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

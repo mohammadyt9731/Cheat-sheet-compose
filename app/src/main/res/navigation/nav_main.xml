@@ -6,6 +6,19 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.cheatsheet.ui.HomeFragment"
-        android:label="HomeFragment" />
+        android:name="com.example.cheatsheet.ui.fragment.HomeFragment"
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.cheatsheet.ui.fragment.DetailFragment"
+        android:label="DetailFragment">
+        <argument
+            android:name="text"
+            app:argType="string" />
+    </fragment>
 </navigation>

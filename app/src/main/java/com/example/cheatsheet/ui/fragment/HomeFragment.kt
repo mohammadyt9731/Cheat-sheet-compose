@@ -1,4 +1,4 @@
-package com.example.cheatsheet.ui
+package com.example.cheatsheet.ui.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -33,7 +33,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.chaetsheet.R
+import com.example.cheatsheet.ui.model.ListItemModel
 import com.example.cheatsheet.ui.theme.CheatSheetTheme
 import com.example.cheatsheet.ui.theme.DarkGray
 import com.google.accompanist.flowlayout.FlowRow
@@ -340,6 +342,13 @@ class HomeFragment : Fragment() {
                             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                                 items(items.size) { index ->
                                     ListItem(listItemModel = items[index],
+                                        rootClick = {
+                                            val directions =
+                                                HomeFragmentDirections.actionHomeFragmentToDetailFragment(
+                                                    items[index].text
+                                                )
+                                            findNavController().navigate(directions)
+                                        },
                                         deleteClick = { deleteClick(index) },
                                         setRandomColor = { setRandomColor(index) })
                                     if ((index != items.size - 1)) {
@@ -368,6 +377,7 @@ class HomeFragment : Fragment() {
     @Composable
     fun ListItem(
         listItemModel: ListItemModel,
+        rootClick: () -> Unit,
         deleteClick: () -> Unit,
         setRandomColor: () -> Unit
     ) {
@@ -377,7 +387,8 @@ class HomeFragment : Fragment() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .clickable { rootClick() },
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
