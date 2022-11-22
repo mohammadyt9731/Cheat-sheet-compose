@@ -13,6 +13,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -168,12 +171,10 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun ListSection() {
-        var inputValueState by remember {
+        var inputValueState by rememberSaveable {
             mutableStateOf("")
         }
-        val items = remember {
-            mutableStateListOf<ListItemModel>()
-        }
+        val items = rememberMutableStateListOf<ListItemModel>()
 
         InputField(value = inputValueState) {
             inputValueState = it
@@ -460,8 +461,8 @@ class HomeFragment : Fragment() {
             horizontalAlignment = Alignment.Start
         ) {
 
-            var firstCheckBoxState by remember { mutableStateOf(false) }
-            var secondCheckBoxState by remember { mutableStateOf(true) }
+            var firstCheckBoxState by rememberSaveable { mutableStateOf(false) }
+            var secondCheckBoxState by rememberSaveable { mutableStateOf(true) }
 
             CustomCheckBox(firstCheckBoxState) {
                 firstCheckBoxState = firstCheckBoxState.not()
@@ -522,10 +523,10 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun RadioGroupSection(scaffoldState: ScaffoldState) {
-        var selectedIndex by remember {
+        var selectedIndex by rememberSaveable {
             mutableStateOf(0)
         }
-        var lastSelectedIndex by remember {
+        var lastSelectedIndex by rememberSaveable {
             mutableStateOf(0)
         }
 
@@ -672,5 +673,25 @@ class HomeFragment : Fragment() {
             (0..255).random(),
             (0..255).random()
         )
+    }
+
+    @Composable
+    fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> {
+        return rememberSaveable(
+            saver = listSaver(
+                save = { stateList ->
+                    if (stateList.isNotEmpty()) {
+                        val first = stateList.first()
+                        if (!canBeSaved(first)) {
+                            throw IllegalStateException("${first::class} cannot be saved. By default only types which can be stored in the Bundle class can be saved.")
+                        }
+                    }
+                    stateList.toList()
+                },
+                restore = { it.toMutableStateList() }
+            )
+        ) {
+            elements.toList().toMutableStateList()
+        }
     }
 }
