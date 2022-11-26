@@ -12,6 +12,7 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.CheatSheet"
         tools:targetApi="31">
+
         <activity
             android:name="com.example.cheatsheet.MainActivity"
             android:exported="true"
