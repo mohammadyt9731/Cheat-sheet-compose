@@ -17,21 +17,19 @@ import com.example.cheatsheet.ui.theme.CheatSheetTheme
 
 @Composable
 fun DetailScreen(text: String) {
-    CheatSheetTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(all = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.onBackground,
-                fontSize = 32.sp,
-                textAlign = TextAlign.Center
-            )
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(all = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.h5,
+            color = MaterialTheme.colors.onBackground,
+            fontSize = 32.sp,
+            textAlign = TextAlign.Center
+        )
     }
 }

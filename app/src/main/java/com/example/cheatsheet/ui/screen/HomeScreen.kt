@@ -45,9 +45,6 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(navController: NavHostController) {
-    //set status bar color
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setSystemBarsColor(color = MaterialTheme.colors.background)
 
     val scaffoldState = rememberScaffoldState()
 
@@ -92,7 +89,7 @@ fun HomeScreen(navController: NavHostController) {
 }
 
 @Composable
-fun GreetingSection(name: String) {
+private fun GreetingSection(name: String) {
     Text(
         modifier = Modifier.fillMaxWidth(),
         text = buildAnnotatedString {
@@ -113,7 +110,7 @@ fun GreetingSection(name: String) {
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
-fun TopImage(painter: Painter, title: String) {
+private fun TopImage(painter: Painter, title: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -149,7 +146,7 @@ fun TopImage(painter: Painter, title: String) {
 }
 
 @Composable
-fun ListSection(navController: NavHostController) {
+private fun ListSection(navController: NavHostController) {
     var inputValueState by rememberSaveable {
         mutableStateOf("")
     }
@@ -210,7 +207,7 @@ fun ListSection(navController: NavHostController) {
 }
 
 @Composable
-fun InputField(value: String, onValueChange: (String) -> Unit) {
+private fun InputField(value: String, onValueChange: (String) -> Unit) {
     TextField(
         modifier = Modifier
             .fillMaxWidth()
@@ -238,7 +235,7 @@ fun InputField(value: String, onValueChange: (String) -> Unit) {
 }
 
 @Composable
-fun RoundedButton(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
+private fun RoundedButton(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
     Button(
         modifier = modifier,
         onClick = onClick,
@@ -258,7 +255,7 @@ fun RoundedButton(modifier: Modifier = Modifier, text: String, onClick: () -> Un
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun TabsAndPager(
+private fun TabsAndPager(
     items: List<ListItemModel>,
     deleteClick: (Int) -> Unit,
     setRandomColor: (Int) -> Unit,
@@ -364,7 +361,7 @@ fun TabsAndPager(
 }
 
 @Composable
-fun ListItem(
+private fun ListItem(
     listItemModel: ListItemModel,
     rootClick: () -> Unit,
     deleteClick: () -> Unit,
@@ -406,7 +403,7 @@ fun ListItem(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ChipItem(text: String) {
+private fun ChipItem(text: String) {
     Chip(
         modifier = Modifier
             .padding(end = 12.dp)
@@ -424,7 +421,7 @@ fun ChipItem(text: String) {
 }
 
 @Composable
-fun DashedLineDivider(color: Color = MaterialTheme.colors.primary) {
+private fun DashedLineDivider(color: Color = MaterialTheme.colors.primary) {
     val pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f), 0f)
     Canvas(
         modifier = Modifier.fillMaxWidth()
@@ -440,7 +437,7 @@ fun DashedLineDivider(color: Color = MaterialTheme.colors.primary) {
 }
 
 @Composable
-fun CheckBoxSection() {
+private fun CheckBoxSection() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -463,7 +460,7 @@ fun CheckBoxSection() {
 }
 
 @Composable
-fun CustomCheckBox(isSelected: Boolean, changeSelected: () -> Unit) {
+private fun CustomCheckBox(isSelected: Boolean, changeSelected: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -510,7 +507,7 @@ fun CustomCheckBox(isSelected: Boolean, changeSelected: () -> Unit) {
 }
 
 @Composable
-fun RadioGroupSection(scaffoldState: ScaffoldState) {
+private fun RadioGroupSection(scaffoldState: ScaffoldState) {
     var selectedIndex by rememberSaveable {
         mutableStateOf(0)
     }
@@ -553,7 +550,7 @@ fun RadioGroupSection(scaffoldState: ScaffoldState) {
 }
 
 @Composable
-fun CustomRadioButton(
+private fun CustomRadioButton(
     modifier: Modifier,
     text: String,
     index: Int,
@@ -601,7 +598,7 @@ fun CustomRadioButton(
 }
 
 @Composable
-fun ShowSnackBar(
+private fun ShowSnackBar(
     text: String,
     actionLabel: String,
     scaffoldState: ScaffoldState,
@@ -620,7 +617,7 @@ fun ShowSnackBar(
 }
 
 @Composable
-fun ShowDropDownMenu(
+private fun ShowDropDownMenu(
     isShowing: Boolean,
     deleteClick: () -> Unit,
     setRandomColor: () -> Unit,

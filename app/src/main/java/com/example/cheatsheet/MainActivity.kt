@@ -10,12 +10,17 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.cheatsheet.ui.navigation.NavGraph
 import com.example.cheatsheet.ui.theme.CheatSheetTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CheatSheetTheme{
+            //set status bar color
+            val systemUiController = rememberSystemUiController()
+            systemUiController.setSystemBarsColor(color = MaterialTheme.colors.background)
+
+            CheatSheetTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
